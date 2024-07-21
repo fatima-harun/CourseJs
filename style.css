@@ -1,0 +1,107 @@
+body{
+    margin:0;
+    font-family:sans-serif
+}
+.logo{
+    width:15vh;
+    height:auto; 
+}
+.btn1{
+    background-color:#546DE5;
+    color:white;
+    padding:1vh;
+    border:none;
+    border-radius:10vh;
+    padding-right:3vh;
+    padding-left:3vh;
+    margin-bottom:2vh
+}
+.container1{
+    margin-left:8vh
+}
+header{
+    margin-left:12vh;
+    margin-top:5vh
+}
+.btn2{
+    background-color:white;
+    color:#9BA6B2;
+    padding:1vh;
+    border-color:#546DE5;
+    border-width:thin;
+    border-radius:10vh;
+    padding-right:3vh;
+    padding-left:3vh;
+    margin-left:1vh
+}
+.btn4{
+    background-color:#DB4437;
+    color:white;
+    padding:1vh;
+    border:none;
+    border-radius:10vh;
+    padding-right:12vh;
+    padding-left:12vh;
+}
+.paragraphe1{
+    font-size:2vh;
+    text-align:center;
+    margin-bottom:8vh
+}
+span{
+    color:#546DE5
+}
+.ellipse{
+    width:30vh;
+    height:auto;
+}
+input{
+    width:27vh;
+    margin-bottom:2vh;
+    margin-top:1vh
+}
+
+.wave1{
+    height:auto;
+    width:46.2vh
+}
+.first_bloc{
+    margin-bottom:5vh
+}
+.logo1{
+    width:15vh;
+    height:auto;
+    margin-left:14vh;
+}
+.arrow{
+    height:auto;
+    width:5vh;
+    margin-left:2vh
+}
+.btn3{
+    background-color:#546DE5;
+    color:white;
+    padding:1vh;
+    border:none;
+    border-radius:10vh;
+    padding-right:12vh;
+    padding-left:12vh;
+}
+form{
+    margin-left:10vh
+}
+h1{
+    color:#57606F;
+    font-size:3vh;
+    text-align:center
+}
+.formulaire{
+    margin-bottom:2vh
+}
+.paragraphe2{
+    margin-left:8vh
+}
+
+
+
+ 

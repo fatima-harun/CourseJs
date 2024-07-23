@@ -56,14 +56,15 @@ span{
     height:auto;
 }
 input{
-    width:27vh;
-    margin-bottom:2vh;
+    width:28vh;
+    margin-bottom:4vh;
     margin-top:1vh
 }
 
 .wave1{
     height:auto;
-    width:46.2vh
+    width:46.2vh;
+    margin-top:33vh
 }
 .first_bloc{
     margin-bottom:5vh
@@ -76,7 +77,8 @@ input{
 .arrow{
     height:auto;
     width:5vh;
-    margin-left:2vh
+    margin-left:2vh;
+    margin-top:4vh
 }
 .btn3{
     background-color:#546DE5;
@@ -95,13 +97,24 @@ h1{
     font-size:3vh;
     text-align:center
 }
+#registrationForm{
+    margin-top:7vh
+}
 .formulaire{
     margin-bottom:2vh
 }
 .paragraphe2{
     margin-left:8vh
 }
+#shoppingForm{
+   margin-right:6vh
+}
+h2{
+    font-size:2vh;
+    text-align:center
+}
+.list-group{
+    margin-bottom:20vh
+}
 
 
-
- 

@@ -3,13 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="acceuil.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <title>TrackWallet</title>
 </head>
 <body>
-     <input type="date" class="form-control" placeholder="Choisissez une date">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <div class="container">
+        <div class="header text-center my-4">
+            <img src="img/TrackWallet.png" alt="Logo" class="logo">
+        </div>
+        <form id="shoppingForm" class="mb-3">
+            <div class="form-group">
+                <div class="cart"><img src="img/Shopping Cart.png" alt=""></div>
+            </div>
+            <div class="form-container">
+                <h2>Ajouter une course</h2>
+                <p><label for="date">Choisissez une date</label></p>
+                <input type="date" id="date" class="form-control">
+                <input type="hidden" id="update-id">
+                <div class="form-group">
+                    <p><label for="produit">Nom du produit</label></p>
+                    <input type="text" id="produit" class="form-control">
+                </div>
+                <div class="form-group">
+                    <p><label for="prix">Prix unitaire</label></p>
+                    <input type="number" id="prix" class="form-control">
+                </div>
+                <div class="form-group">
+                    <p><label for="quantite">Quantité</label></p>
+                    <input type="number" id="quantite" class="form-control">
+                </div>
+                <div class="form-group">
+                    <p><label for="total">Prix total</label></p>
+                    <input type="number" id="total" class="form-control" readonly>
+                </div>
+                <button type="submit" id="Addbtn" class="btn btn-primary btn-block">Ajouter</button>
+            </div>
+        </form>
+
+        <div class="list-group" id="shopping-list">
+            <!-- Les courses seront affichées ici -->
+        </div>
+    </div>
+   
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+        import { getDatabase, ref, set, get, child, update, remove } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-database.js";
+      
+        const firebaseConfig = {
+          apiKey: "AIzaSyD_5cFm7MxBKmnmJ9QcuIQWFAW2gz0yEb0",
+          authDomain: "coursesjs-80d1f.firebaseapp.com",
+          databaseURL: "https://coursesjs-80d1f-default-rtdb.firebaseio.com",
+          projectId: "coursesjs-80d1f",
+          storageBucket: "coursesjs-80d1f.appspot.com",
+          messagingSenderId: "994116214623",
+          appId: "1:994116214623:web:a76f41c69cfe1766ba20ea"
+        };
+      
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase();
+
+        const date = document.getElementById('date');
+        const produit = document.getElementById('produit');
+        const prix = document.getElementById('prix');
+        const quantite = document.getElementById('quantite');
+        const total = document.getElementById('total');
+        const Addbtn = document.getElementById('Addbtn');
+        const shoppingList = document.getElementById('shopping-list');
+
+        function AddData(event) {
+            event.preventDefault(); 
+
+            const key = document.getElementById('update-id').value;
+            const dbRef = ref(db, 'courses/' + (key ? key : produit.value));
+
+            set(dbRef, {
+                datecourse: date.value,
+                nomproduit: produit.value,
+                prixproduit: prix.value,
+                quantiteproduit: quantite.value,
+                totalproduit: total.value,
+                status: "Non Acheté"
+            }).then(() => {
+                alert(key ? "Course mise à jour avec succès" : "Course ajoutée avec succès");
+                document.getElementById('shoppingForm').reset();
+                ReadData(); 
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
+
+        Addbtn.addEventListener('click', AddData);
+
+        function calculateTotal() {
+            let prixUnitaire = parseFloat(prix.value);
+            let quantiteValue = parseFloat(quantite.value);
+            if (!isNaN(prixUnitaire) && !isNaN(quantiteValue)) {
+                total.value = prixUnitaire * quantiteValue;
+            } else {
+                total.value = 0;
+            }
+        }
+
+        quantite.addEventListener('input', calculateTotal);
+        prix.addEventListener('input', calculateTotal);
+
+        function ReadData() {
+            const dbRef = ref(db);
+            get(child(dbRef, 'courses/')).then((snapshot) => {
+                if (snapshot.exists()) {
+                    shoppingList.innerHTML = ''; 
+                    const data = snapshot.val();
+                    Object.keys(data).forEach((key) => {
+                        const course = data[key];
+                        shoppingList.innerHTML += `
+                            <div class="list-group-item item card ${course.status === 'Acheté' ? 'checked' : ''}" id="${key}">
+                                <div>
+                                    <p>Produit : ${course.nomproduit}</p>
+                                    <p>Quantité : ${course.quantiteproduit}</p>
+                                    <p>Prix : ${course.prixproduit} CFA</p>
+                                    <p>Total : ${course.totalproduit} CFA</p>
+                                    <p>Date : ${course.datecourse}</p>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                   <div class="status-checkbox"> <input type="checkbox"  ${course.status === 'Acheté' ? 'checked' : ''}> </div>
+                                    <div>
+                                        <button class="btn btn-outline-primary btn-sm mr-2 updateBtn" data-toggle="modal" data-target="#updateModal"><i class="fas fa-edit edit-icon"></i></button>
+                                        <button class="btn btn-outline-danger btn-sm deleteBtn"><i class="fas fa-trash delete-icon"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    attachEventListeners();
+                } else {
+                    shoppingList.innerHTML = 'Aucune course trouvée';
+                }
+            }).catch((error) => {
+                console.error("Erreur lors de la lecture des données: ", error);
+            });
+        }
+
+        function attachEventListeners() {
+            const updateButtons = document.querySelectorAll('.updateBtn');
+            const deleteButtons = document.querySelectorAll('.deleteBtn');
+
+            updateButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const key = e.target.closest('.item').id;
+                    fillUpdateForm(key);
+                });
+            });
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', (e) => {
+                    const key = e.target.closest('.item').id;
+                    deleteData(key);
+                });
+            });
+
+            const checkboxes = document.querySelectorAll('.status-checkbox');
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const key = e.target.closest('.item').id;
+                    updateStatus(key, e.target.checked);
+                });
+            });
+        }
+
+        function fillUpdateForm(key) {
+            const dbRef = ref(db, 'courses/' + key);
+            get(dbRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    document.getElementById('update-id').value = key;
+                    document.getElementById('date').value = data.datecourse;
+                    document.getElementById('produit').value = data.nomproduit;
+                    document.getElementById('prix').value = data.prixproduit;
+                    document.getElementById('quantite').value = data.quantiteproduit;
+                    document.getElementById('total').value = data.totalproduit;
+                }
+            }).catch((error) => {
+                console.error("Erreur lors de la lecture des données: ", error);
+            });
+        }
+
+        function deleteData(key) {
+            const dbRef = ref(db, 'courses/' + key);
+            remove(dbRef).then(() => {
+                alert("Course supprimée avec succès");
+                ReadData();
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
+
+        function updateStatus(key, status) {
+            const dbRef = ref(db, 'courses/' + key);
+            update(dbRef, {
+                status: status ? 'Acheté' : 'Non Acheté'
+            }).then(() => {
+                const itemElement = document.getElementById(key);
+                if (status) {
+                    itemElement.classList.add('checked');
+                } else {
+                    itemElement.classList.remove('checked');
+                }
+            }).catch((error) => {
+                console.error("Erreur lors de la mise à jour du statut: ", error);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', ReadData);
+    </script>
 </body>
 </html>
